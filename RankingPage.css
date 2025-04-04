@@ -1,0 +1,78 @@
+/* components/RankingPage.css */
+.ranking-page {
+  padding: 20px;
+}
+
+.time-range-buttons {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: center; /* 가운데 정렬 */
+  gap: 10px; /* 버튼 간격을 margin-right 대신 이걸로 처리 가능 */
+}
+
+.ranking-page h2 {
+  text-align: center; /* 텍스트 가운데 정렬 */
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-size: bold;
+}
+
+.time-range-buttons button {
+  padding: 8px 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: normal; /* 기본 굵기를 normal로 설정 */
+}
+
+.time-range-buttons button.active {
+  font-weight: bold; /* 선택된 버튼 텍스트를 굵게 표시 */
+}
+
+.ranking-page ul {
+  list-style: none;
+  padding: 0;
+}
+
+.ranking-page li {
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: flex-start; /* 이미지와 내용을 세로로 정렬 */
+}
+
+.ranking-page li > span {
+  margin-right: 10px;
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #333;
+}
+
+.ranking-page li .article-content {
+  flex-grow: 1;
+}
+
+.ranking-page li h3 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  font-size: 1.1em;
+}
+
+.ranking-page li h3 a {
+  text-decoration: none;
+  color: #333;
+}
+
+.ranking-page li p {
+  margin-bottom: 5px;
+  color: #777;
+  font-size: 0.9em;
+}
+
+.ranking-page li .article-link a {
+  color: #007bff;
+}
+
+.ranking-page li:last-child {
+  border-bottom: none;
+}

@@ -1,0 +1,126 @@
+header {
+  background-color: #f8f8f8;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+
+.hamburger-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-self: center;
+  width: 30px;
+  height: 20px;
+  cursor: pointer;
+  margin-top: -23px; /* 아래 여백 때문에 위로 이동 */
+  margin-left: -10px; /*  왼쪽 여백 살짝 */
+}
+
+.hamburger-menu div {
+  width: 100%;
+  height: 3px;
+  background-color: #333;
+}
+
+.user-actions a {
+  margin-left: 15px;
+  text-decoration: none;
+  color: #333;
+}
+
+.header-right button {
+  margin-left: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px; /*  더 둥글게 */
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.95em;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.header-right .login-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.header-right .signup-button {
+  background-color: #28a745;
+  color: white;
+}
+
+/* 마우스 올렸을 때 부드러운 애니메이션 */
+.header-right .login-button:hover,
+.header-right .signup-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.header-right .logout-button {
+  background-color: #dc3545;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 마우스 올렸을 때 부드러운 애니메이션 */
+.header-right .logout-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.header-right .logged-in-user {
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.news-header {
+  background-color: #f5f5f5;
+  min-height: 50px; /*  직접 높이 확보 */
+  padding: 0 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky; /* 스크롤 시 상단 헤더 고정 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* 스크롤 시 살짝 그림자 추가 */
+  top: 0;
+  z-index: 1000;
+  transition: top 0.3s ease-in-out;
+  border-bottom: 1px solid #ccc !important; /*강제 실행*/
+}
+
+.news-header.hidden {
+  transform: translateY(-100%);
+}
+
+.news-header.visible {
+  transform: translateY(0);
+}
+
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.news-logo {
+  font-family: "Noto Sans KR", sans-serif;
+  font-size: 33px !important;
+  font-weight: 900;
+  color: #111;
+  padding: 10px 0;
+}
