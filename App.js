@@ -6,8 +6,9 @@ import SearchBar from './components/SearchBar';
 import SideMenu from './components/SideMenu';
 import Login from './components/Login';
 import Signup from './components/Signup';
-import AnalyzePage from './components/AnalyzePage'; // AnalyzePage 컴포넌트 import
-import RankingPage from './components/RankingPage'; // RankingPage 컴포넌트 import
+import AnalyzePage from './components/AnalyzePage';
+import RankingPage from './components/RankingPage';
+import RankingComment from './components/RankingComment'; // 🔹 댓글 페이지 추가
 import './App.css';
 
 function App() {
@@ -17,8 +18,8 @@ function App() {
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
     const [loggedInUsername, setLoggedInUsername] = useState(null);
-    const [currentPage, setCurrentPage] = useState('news'); // 현재 보여줄 페이지 상태 관리
-    // const [page, setPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState('news');
+    const [selectedArticle, setSelectedArticle] = useState(null); // 🔹 선택된 뉴스 저장
 
     const handleSearch = (term) => {
         setSearchTerm(term);
@@ -55,7 +56,7 @@ function App() {
 
     const handleLoginSuccess = (username) => {
         setLoggedInUsername(username);
-        console.log(`App.js - User logged in successfully! Username: ${username}`); // 추가된 로그
+        console.log(`App.js - User logged in successfully! Username: ${username}`);
     };
 
     const handleLogout = () => {
@@ -65,12 +66,22 @@ function App() {
 
     const navigatePage = (page) => {
         setCurrentPage(page);
-        setIsMenuOpen(false); // 페이지 이동 후 사이드 메뉴 닫기
+        setIsMenuOpen(false);
     };
 
     const resetSearchAndCategory = () => {
         setSearchTerm('');
-        setSelectedCategory(''); // 메인로고 누를시 메인 화면 이동
+        setSelectedCategory('');
+    };
+
+    const handleOpenCommentPage = (article) => {
+        setSelectedArticle(article);
+        setCurrentPage('comment');
+    };
+
+    const handleBackToRanking = () => {
+        setCurrentPage('ranking');
+        setSelectedArticle(null);
     };
 
     return (
@@ -85,17 +96,30 @@ function App() {
                     onNavigate={navigatePage}
                     onResetSearchAndCategory={resetSearchAndCategory}
                 />
-                <SideMenu isOpen={isMenuOpen} onClose={closeMenu} onNavigate={navigatePage} /> {/* onNavigate 함수를 SideMenu에 전달 */}
+                <SideMenu isOpen={isMenuOpen} onClose={closeMenu} onNavigate={navigatePage} />
+                {/* 구분선 추가*/}
+                <div className="header-divider" />
                 <Navigation onCategorySelect={handleCategorySelect} selectedCategory={selectedCategory} />
             </div>
+
             {currentPage === 'news' && <SearchBar onSearch={handleSearch} />}
+
             {(() => {
                 if (currentPage === 'news') {
-                    return <MainContent searchTerm={searchTerm} selectedCategory={selectedCategory} />;// 현재 페이지 전달, 페이지 변경 함수 전달 추가
+                    return <MainContent searchTerm={searchTerm} selectedCategory={selectedCategory} />;
                 } else if (currentPage === 'analyze') {
                     return <AnalyzePage isLoggedIn={!!loggedInUsername} loggedInUsername={loggedInUsername} />;
                 } else if (currentPage === 'ranking') {
-                    return <RankingPage />;
+                    return <RankingPage onArticleClick={handleOpenCommentPage} />;
+                } else if (currentPage === 'comment') {
+                    return (
+                        <RankingComment
+                            selectedArticle={selectedArticle}
+                            isLoggedIn={!!loggedInUsername}
+                            loggedInUsername={loggedInUsername}
+                            onBack={handleBackToRanking}
+                        />
+                    );
                 } else {
                     return null;
                 }

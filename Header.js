@@ -17,7 +17,7 @@ function Header({ onMenuToggle, onOpenLogin, onOpenSignup, loggedInUsername, onL
                 }}
                 style={{ cursor: 'pointer' }}
                 >
-                    팩트체크
+                    신뢰도 판단기
                     </span>
             </div>
             <div className="header-right">
@@ -26,7 +26,7 @@ function Header({ onMenuToggle, onOpenLogin, onOpenSignup, loggedInUsername, onL
                         <span className="logged-in-user">{loggedInUsername}</span>
                         <button className="logout-button" onClick={onLogout}>
                             <FaSignOutAlt />로그아웃</button> 
-                    </>     //로그아웃 이미지 추가가
+                    </>     
                 ) : (
                     <>
                         <button className="login-button" onClick={onOpenLogin}>

@@ -88,7 +88,7 @@
 
 .news-navigation {
   padding: 10px 20px;
-  background-color: #f1f3f5; /* 선택 사항: 네비게이션 바 배경색 */
+  background-color: #6b8ba4; /* 선택 사항: 네비게이션 바 배경색 */
   display: flex;
   gap: 10px; /* 카테고리 버튼 사이 간격 */
   justify-content: center; /* 카테고리 버튼들을 가운데 정렬 */
@@ -97,25 +97,24 @@
 }
 
 .news-navigation button {
-  padding: 8px 14px;
-  border: 1px solid #ccc;
-  border-radius: 999px; /* ✅ 둥글게 */
-  background-color: white;
-  color: #333;
-  font-weight: 500;
-  font-size: 0.95em;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 999px;
+  background-color: transparent;
+  color: black;
+  font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s ease-in-out;
 }
 
 .news-navigation button:hover {
-  background-color: #e9ecef;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* ✅ 선택된 버튼 강조 (예: 선택된 카테고리에 active 클래스 추가) */
 .news-navigation button.active {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
+  background-color: #e1ecf4;
+  color: #111;
+  font-weight: 700;
+  border: none;
 }

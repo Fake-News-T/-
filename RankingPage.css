@@ -1,78 +1,210 @@
-/* components/RankingPage.css */
+/* 전체 레이아웃 */
 .ranking-page {
-  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+  font-family: "Noto Sans KR", sans-serif;
 }
 
-.time-range-buttons {
-  margin-bottom: 15px;
+/* 내부 래퍼는 .ranking-page와 같은 max-width를 가짐 */
+.blue-box-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px; /* .ranking-page와 동일 */
   display: flex;
-  justify-content: center; /* 가운데 정렬 */
-  gap: 10px; /* 버튼 간격을 margin-right 대신 이걸로 처리 가능 */
+  gap: 10px;
 }
 
-.ranking-page h2 {
-  text-align: center; /* 텍스트 가운데 정렬 */
-  margin-bottom: 20px;
-  font-size: 24px;
-  font-size: bold;
+.ranking-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 16px;
 }
 
-.time-range-buttons button {
-  padding: 8px 15px;
+/* 파란 박스: 랭킹 기준 선택 영역 */
+.blue-box {
+  background-color: #a0b8ce;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  padding: 12px 0; /* 좌우 패딩은 없앰 */
+  box-sizing: border-box;
+}
+
+/* 시간 필터 버튼 (이번주 / 이번달) */
+.time-range-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.time-range-buttons button,
+.sort-buttons button {
+  padding: 8px 14px;
+  border-radius: 6px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  background-color: white;
   cursor: pointer;
-  font-weight: normal; /* 기본 굵기를 normal로 설정 */
+  font-weight: bold;
+  transition: 0.2s;
 }
 
-.time-range-buttons button.active {
-  font-weight: bold; /* 선택된 버튼 텍스트를 굵게 표시 */
+.time-range-buttons button.active,
+.sort-buttons button.active {
+  background-color: #2563eb;
+  color: white;
+  border-color: #2563eb;
 }
 
-.ranking-page ul {
+.time-range-buttons button:hover,
+.sort-buttons button:hover {
+  background-color: #e5ecf4;
+}
+
+/* 정렬 버튼 (추천순/비추천순) */
+.sort-buttons {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+/* 기사 리스트 */
+.ranking-list {
   list-style: none;
   padding: 0;
+  margin-top: 20px;
 }
 
-.ranking-page li {
-  padding: 15px 0;
-  border-bottom: 1px solid #eee;
+.ranking-item {
   display: flex;
-  align-items: flex-start; /* 이미지와 내용을 세로로 정렬 */
+  align-items: flex-start;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background-color: #fafafa;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.ranking-page li > span {
-  margin-right: 10px;
+.ranking-item:hover {
+  background-color: #f0f4f8;
+}
+/* 랭킹 순위 뱃지 */
+.rank-badge {
+  display: inline-block;
   font-weight: bold;
-  font-size: 1.2em;
+  font-style: italic;
+  font-size: 1.2rem;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  margin-right: 12px;
+  border: 1px solid #ccc;
   color: #333;
 }
 
-.ranking-page li .article-content {
-  flex-grow: 1;
+/* 순위별 색상 */
+.rank-badge.gold {
+  background-color: #ffd700;
+}
+.rank-badge.silver {
+  background-color: #c0c0c0;
+}
+.rank-badge.bronze {
+  background-color: #cd7f32;
+}
+.rank-badge.default {
+  background-color: #ffffff;
 }
 
-.ranking-page li h3 {
-  margin-top: 0;
-  margin-bottom: 5px;
-  font-size: 1.1em;
+/* 기사 콘텐츠 영역 */
+.article-content {
+  flex: 1;
 }
 
-.ranking-page li h3 a {
-  text-decoration: none;
+.article-content h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.article-summary {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.article-meta {
+  font-size: 14px;
   color: #333;
+  margin-top: 4px;
 }
 
-.ranking-page li p {
-  margin-bottom: 5px;
-  color: #777;
-  font-size: 0.9em;
+.article-meta span {
+  margin-right: 10px;
 }
 
-.ranking-page li .article-link a {
+.article-link a {
   color: #007bff;
+  text-decoration: none;
+  font-size: 13px;
 }
 
-.ranking-page li:last-child {
-  border-bottom: none;
+.article-link a:hover {
+  text-decoration: underline;
+}
+
+.vote-icons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.vote-item {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+}
+
+.vote-item.up .vote-icon {
+  color: red;
+  margin-right: 5px;
+}
+
+.vote-item.down .vote-icon {
+  color: blue;
+  margin-right: 5px;
+}
+
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  background-color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pagination button.active {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+.pagination-ellipsis {
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  color: #999;
 }
