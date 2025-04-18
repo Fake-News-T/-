@@ -1,9 +1,11 @@
 // components/RankingComment.js
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // useNavigate 훅 import
 import './RankingComment.css';
 import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
 
 function RankingComment({ selectedArticle, isLoggedIn, loggedInUsername, onBack }) {
+    const navigate = useNavigate(); // useNavigate 훅 사용
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
     const [error, setError] = useState('');
@@ -12,8 +14,7 @@ function RankingComment({ selectedArticle, isLoggedIn, loggedInUsername, onBack 
     const [editContent, setEditContent] = useState(''); // 수정할 내용
     const [voteCounts, setVoteCounts] = useState({}); // 🔹 댓글별 추천/비추천 수 저장
     const [votedComments, setVotedComments] = useState([]); // 🔹 사용자가 이미 투표한 댓글 ID 목록
-
-
+    const [votesLoaded, setVotesLoaded] = useState(false);
 
     // 댓글 불러오기
     useEffect(() => {
@@ -30,6 +31,7 @@ function RankingComment({ selectedArticle, isLoggedIn, loggedInUsername, onBack 
                             allCounts[comment.id] = result.counts;
                         }
                         setVoteCounts(allCounts);
+                        setVotesLoaded(true); // ✅ 이 줄 추가
                     };
                     fetchVotes();
                 })
@@ -58,8 +60,6 @@ function RankingComment({ selectedArticle, isLoggedIn, loggedInUsername, onBack 
 
             if (!response.ok) throw new Error('댓글 작성 실패');
 
-            // const result = await response.json();
-
             // 댓글 새로고침
             const refreshed = await fetch(`http://localhost:5000/api/comments?article_link=${selectedArticle.article_link}`);
             const data = await refreshed.json();
@@ -87,23 +87,23 @@ function RankingComment({ selectedArticle, isLoggedIn, loggedInUsername, onBack 
         setEditingCommentId(comment.id);
         setEditContent(comment.content);
     };
-    
+
     //댓글 수정
     const handleUpdateComment = async (e) => {
         e.preventDefault();
         if (!editContent.trim()) return;
-    
+
         try {
             const response = await fetch(`http://localhost:5000/api/comments/${editingCommentId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ content: editContent }),
             });
-    
+
             if (!response.ok) {
                 throw new Error('수정 실패');
             }
-    
+
             // 수정 반영
             setComments(prev =>
                 prev.map(c =>
@@ -117,18 +117,18 @@ function RankingComment({ selectedArticle, isLoggedIn, loggedInUsername, onBack 
             setError('댓글 수정에 실패했습니다.');
         }
     };
-    
+
     //댓글 삭제
     const handleDeleteComment = async (commentId) => {
         try {
             const response = await fetch(`http://localhost:5000/api/comments/${commentId}`, {
                 method: 'DELETE',
             });
-    
+
             if (!response.ok) {
                 throw new Error('삭제 실패');
             }
-    
+
             setComments(prev =>
                 prev.map(c =>
                     c.id === commentId ? { ...c, content: '삭제된 댓글입니다.', is_deleted: true } : c
@@ -145,12 +145,12 @@ function RankingComment({ selectedArticle, isLoggedIn, loggedInUsername, onBack 
             alert("로그인 후 이용 가능합니다.");
             return;
         }
-    
+
         if (votedComments.includes(commentId)) {
             alert("이미 투표한 댓글입니다.");
             return;
         }
-    
+
         try {
             const res = await fetch('http://localhost:5000/api/comments/vote', {
                 method: 'POST',
@@ -161,19 +161,19 @@ function RankingComment({ selectedArticle, isLoggedIn, loggedInUsername, onBack 
                     is_upvote: isUpvote
                 })
             });
-    
+
             const result = await res.json();
             if (!res.ok) throw new Error(result.error);
-    
+
             // 투표 후 실시간으로 최신 count 불러오기
             const voteRes = await fetch(`http://localhost:5000/api/comments/vote-counts?comment_id=${commentId}`);
             const voteData = await voteRes.json();
-    
+
             setVoteCounts(prev => ({
                 ...prev,
                 [commentId]: voteData.counts
             }));
-    
+
             setVotedComments(prev => [...prev, commentId]); // 이미 투표한 댓글로 등록
         } catch (err) {
             if (err.message.includes('409')) {
@@ -183,15 +183,30 @@ function RankingComment({ selectedArticle, isLoggedIn, loggedInUsername, onBack 
             }
             alert(err.message || "투표에 실패했습니다.");
         }
-        
-        
     };
-    
+
+    const handleBackButtonClick = () => {
+        navigate('/ranking'); // 랭킹 페이지로 이동
+        onBack();             // App.js의 selectedArticle 상태를 null로 설정하는 함수 호출
+    };
+
+    // 베스트 댓글 필터링 및 정렬 (최대 3개)
+    // ✅ 더 안전한 방식: ID 기준으로 베스트 댓글 분리
+const bestCommentIds = comments
+.filter(c => !c.parent_id && (voteCounts[c.id]?.upvotes || 0) >= 3)
+.sort((a, b) => (voteCounts[b.id]?.upvotes || 0) - (voteCounts[a.id]?.upvotes || 0))
+.slice(0, 3)
+.map(c => c.id);
+
+const bestComments = comments.filter(c => bestCommentIds.includes(c.id));
+const regularComments = comments.filter(c => !c.parent_id && !bestCommentIds.includes(c.id));
+
+
     return (
         <div className="ranking-comment-page">
-            <button className="back-button" onClick={onBack}>← 뒤로가기</button>
+            <button className="back-button" onClick={handleBackButtonClick}>← 뒤로가기</button>
             <div className="article-summary-box">
-                <h2>{selectedArticle.title || '요약된 뉴스'}</h2> {/* 제목 표시 (없을 경우 대체 텍스트) */}    
+                <h2>{selectedArticle.title || '요약된 뉴스'}</h2> {/* 제목 표시 (없을 경우 대체 텍스트) */}
 
                 <p>{selectedArticle.article_summary}</p>
                 <a href={selectedArticle.article_link} target="_blank" rel="noopener noreferrer">원본 기사 보기</a>
@@ -216,38 +231,168 @@ function RankingComment({ selectedArticle, isLoggedIn, loggedInUsername, onBack 
                         </div>
                     )
                 )}
+                {votesLoaded && bestComments.length > 0 && (
+                    <div className="best-comments-section">
+                        <h4>🔥 베스트 댓글</h4>
+                        <ul className="best-comment-list">
+                            {bestComments.map(comment => (
+                            <li key={comment.id} className="best-comment-item">
+                                <div className="comment-header">
+                                    <div className="comment-meta">
+                                        <span className="username">{comment.username}</span>
+                                        <span className="separator"> | </span>
+                                        <span>
+                                            {new Date(new Date(comment.created_at).setHours(new Date(comment.created_at).getHours() - 9)).toLocaleString('ko-KR')}
+                                        </span>
+                                    </div>
+                                    {isLoggedIn && comment.username === loggedInUsername && !comment.is_deleted && (
+                                        <div className="comment-actions">
+                                            <button onClick={() => handleEditClick(comment)}>수정</button>
+                                            <button onClick={() => handleDeleteComment(comment.id)}>삭제</button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <p className="comment-content">{comment.content}</p>
+
+                                <div className="comment-footer">
+                                    <div className="left-side">
+                                        {isLoggedIn && (
+                                            <button onClick={() => handleReplyClick(comment.id)}>답글</button>
+                                        )}
+                                    </div>
+                                    <div className="right-side vote-buttons">
+                                        <button
+                                            className={`vote-button recommend ${votedComments.includes(comment.id) ? 'voted' : ''}`}
+                                            onClick={() => handleVote(comment.id, true)}
+                                        >
+                                            <FaThumbsUp className="vote-icon" />
+                                            <span>{voteCounts[comment.id]?.upvotes || 0}</span>
+                                        </button>
+                                        <button
+                                            className={`vote-button not-recommend ${votedComments.includes(comment.id) ? 'voted' : ''}`}
+                                            onClick={() => handleVote(comment.id, false)}
+                                        >
+                                            <FaThumbsDown className="vote-icon" />
+                                            <span>{voteCounts[comment.id]?.downvotes || 0}</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* ✅ 대댓글 렌더링 */}
+                                <ul className="reply-list">
+                                    {comments
+                                        .filter(c => c.parent_id === comment.id)
+                                        .map(reply => (
+                                            <li key={reply.id} className="reply-item">
+                                                {/* ...기존 reply 렌더링 그대로 재사용 */}
+                                                <div className="comment-header">
+                                                    <div className="comment-meta">
+                                                        <span className="username">{reply.username}</span>
+                                                        <span className="separator"> | </span>
+                                                        <span>{new Date(new Date(reply.created_at).setHours(new Date(reply.created_at).getHours() - 9)).toLocaleString('ko-KR')}</span>
+                                                    </div>
+                                                    {isLoggedIn && reply.username === loggedInUsername && !reply.is_deleted && (
+                                                    <div className="comment-actions">
+                                                        <button onClick={() => handleEditClick(reply)}>수정</button>
+                                                        <button onClick={() => handleDeleteComment(reply.id)}>삭제</button>
+                                                    </div>
+                                                    )}
+                                                </div>
+                                                {editingCommentId === reply.id ? (
+                                                    <form onSubmit={handleUpdateComment} className="edit-form">
+                                                    <textarea value={editContent} onChange={(e) => setEditContent(e.target.value)} />
+                                                        <div className="button-group">
+                                                            <button type="submit">수정</button>
+                                                            <button type="button" onClick={() => setEditingCommentId(null)}>취소</button>
+                                                        </div>
+                                                    </form>
+                                                    ) : (
+                                                <>
+                                                <p className="comment-content">
+                                                {reply.is_deleted
+                                                    ? (reply.deleted_by === 'admin' ? '관리자에 의해 삭제된 댓글입니다.' : '삭제된 댓글입니다.')
+                                                    : reply.content}
+                                                    </p>
+                                                    <div className="comment-footer">
+                                                        <div></div>
+                                                        <div className="right-side vote-buttons">
+                                                            <button
+                                                                className={`vote-button recommend ${votedComments.includes(reply.id) ? 'voted' : ''}`}
+                                                                onClick={() => handleVote(reply.id, true)}
+                                                            >
+                                                                <FaThumbsUp className="vote-icon" /><span>{voteCounts[reply.id]?.upvotes || 0}</span>
+                                                            </button>
+                                                            <button
+                                                                className={`vote-button not-recommend ${votedComments.includes(reply.id) ? 'voted' : ''}`}
+                                                                onClick={() => handleVote(reply.id, false)}
+                                                            >
+                                                                    <FaThumbsDown className="vote-icon" /><span>{voteCounts[reply.id]?.downvotes || 0}</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            )}
+                                        </li>
+                                    ))}
+                                </ul>
+
+                                {/* ✅ 대댓글 입력창 */}
+                                {isLoggedIn && replyTo === comment.id && (
+                                    <form onSubmit={handleSubmit} className="reply-form">
+                                        <textarea
+                                            value={newComment}
+                                            onChange={(e) => setNewComment(e.target.value)}
+                                            placeholder="타인에게 피해를 주거나 비속어를 사용하면 제재당할수 있습니다"
+                                        />
+                                        <div className="button-group">
+                                            <button type="submit">등록</button>
+                                            <button type="button" onClick={() => setReplyTo(null)}>취소</button>
+                                        </div>
+                                    </form>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                    </div>
+                )}
+
                 <ul className="comment-list">
-                    {comments
-                        .filter(c => !c.parent_id)
-                        .map(comment => (
+                    
+
+                        {regularComments.map(comment => (
                             <li key={comment.id}>
                                 {/* 상단 메타 + 수정/삭제 버튼을 한 줄에 배치 */}
                                 <div className="comment-header">
                                     <div className="comment-meta">
                                         <span className="username">{comment.username}</span>
                                         <span className="separator"> | </span>
-                                        <span className="date">{new Date(comment.created_at).toLocaleString()}</span>
+                                        <span>{new Date(new Date(comment.created_at).setHours(new Date(comment.created_at).getHours() - 9)).toLocaleString('ko-KR')}</span>
                                     </div>
-                                {/* 오른쪽 수정/삭제 버튼 */}
-                                {isLoggedIn && comment.username === loggedInUsername && !comment.is_deleted && (
-                                    <div className="comment-actions">
-                                        <button onClick={() => handleEditClick(comment)}>수정</button>
-                                        <button onClick={() => handleDeleteComment(comment.id)}>삭제</button>
-                                    </div>
-                                )}
+                                    {/* 오른쪽 수정/삭제 버튼 */}
+                                    {isLoggedIn && comment.username === loggedInUsername && !comment.is_deleted && (
+                                        <div className="comment-actions">
+                                            <button onClick={() => handleEditClick(comment)}>수정</button>
+                                            <button onClick={() => handleDeleteComment(comment.id)}>삭제</button>
+                                        </div>
+                                    )}
                                 </div>
                                 {/* 댓글 내용 */}
                                 {editingCommentId === comment.id ? (
                                     <form onSubmit={handleUpdateComment} className="edit-form">
-                                    <textarea value={editContent}onChange={(e) => setEditContent(e.target.value)} />
-                                    <div className="button-group">
-                                        <button type="submit">수정 완료</button>
-                                        <button type="button" onClick={() => setEditingCommentId(null)}>취소</button>
-                                    </div>
-                                    
-                                </form>
+                                        <textarea value={editContent}onChange={(e) => setEditContent(e.target.value)} />
+                                        <div className="button-group">
+                                            <button type="submit">수정</button>
+                                            <button type="button" onClick={() => setEditingCommentId(null)}>취소</button>
+                                        </div>
+
+                                    </form>
                                 ) : (
-                                    <p className="comment-content">{comment.content}</p>
+                                    <p className="comment-content">
+                                        {comment.is_deleted
+                                            ? (comment.deleted_by === 'admin' ? '관리자에 의해 삭제된 댓글입니다.' : '삭제된 댓글입니다.')
+                                            : comment.content}
+                                    </p>
                                 )}
 
                                 {/* 하단 버튼 영역 (왼쪽 답글 / 오른쪽 추천·비추천) */}
@@ -270,60 +415,66 @@ function RankingComment({ selectedArticle, isLoggedIn, loggedInUsername, onBack 
                                 {/* 대댓글 렌더링 */}
                                 <ul className="reply-list">
                                     {comments
-                                    .filter(c => c.parent_id === comment.id)
-                                    .map(reply => (
-                                        <li key={reply.id} className="reply-item">
-                                            {/* 헤더 영역: 닉네임/날짜 + 수정/삭제 */}
-                                            <div className="comment-header">
-                                                <div className="comment-meta">
-                                                    <span className="username">{reply.username}</span>
-                                                    <span className="separator"> | </span>
-                                                    <span className="date">{new Date(reply.created_at).toLocaleString()}</span>
-                                                </div>
-                                                
-                                                {isLoggedIn && reply.username === loggedInUsername && !reply.is_deleted && (
-                                                    <div className="comment-actions">
-                                                        <button onClick={() => handleEditClick(reply)}>수정</button>
-                                                        <button onClick={() => handleDeleteComment(reply.id)}>삭제</button>
+                                        .filter(c => c.parent_id === comment.id)
+                                        .map(reply => (
+                                            <li key={reply.id} className="reply-item">
+                                                {/* 헤더 영역: 닉네임/날짜 + 수정/삭제 */}
+                                                <div className="comment-header">
+                                                    <div className="comment-meta">
+                                                        <span className="username">{reply.username}</span>
+                                                        <span className="separator"> | </span>
+                                                        <span>{new Date(new Date(reply.created_at).setHours(new Date(comment.created_at).getHours() - 9)).toLocaleString('ko-KR')}</span>
                                                     </div>
-                                                )}
-                                            </div>
-                                            
-                                            {/* 수정 중이면 수정창, 아니면 내용 보여주기 */}
-                                            {editingCommentId === reply.id ? (
-                                                <form onSubmit={handleUpdateComment} className="edit-form">
-                                                    <textarea value={editContent} onChange={(e) => setEditContent(e.target.value)} />
-                                                    <div className="button-group">
-                                                        <button type="submit">수정</button>
-                                                        <button type="button" onClick={() => setEditingCommentId(null)}>취소</button>
-                                                    </div>
-                                                </form>
-                                            ) : (
-                                                <>
-                                                    <p className="comment-content">{reply.content}</p>
 
-                                                    {/* 추천/비추천 버튼 */}
-                                                    <div className="comment-footer">
-                                                        <div></div> {/* 좌측 여백용 (답글 버튼 없음) */}
-                                                        <div className="right-side vote-buttons">
-                                                        <button
-                                                        className={`vote-button recommend ${votedComments.includes(reply.id) ? 'voted' : ''}`}
-                                                        onClick={() => handleVote(reply.id, true)}
-                                                        >
-                                                            <FaThumbsUp className="vote-icon" /><span>{voteCounts[reply.id]?.upvotes || 0}</span>
-                                                        </button>
-                                                        <button
-                                                        className={`vote-button not-recommend ${votedComments.includes(reply.id) ? 'voted' : ''}`}
-                                                        onClick={() => handleVote(reply.id, false)}
-                                                        >
-                                                            <FaThumbsDown className="vote-icon" /><span>{voteCounts[reply.id]?.downvotes || 0}</span>
-                                                        </button>
+
+                                                    {isLoggedIn && reply.username === loggedInUsername && !reply.is_deleted && (
+                                                        <div className="comment-actions">
+                                                            <button onClick={() => handleEditClick(reply)}>수정</button>
+                                                            <button onClick={() => handleDeleteComment(reply.id)}>삭제</button>
                                                         </div>
-                                                    </div>
-                                                </>
-                                            )}
-                                        </li>
+                                                    )}
+                                                </div>
+
+                                                {/* 수정 중이면 수정창, 아니면 내용 보여주기 */}
+                                                {editingCommentId === reply.id ? (
+                                                    <form onSubmit={handleUpdateComment} className="edit-form">
+                                                        <textarea value={editContent} onChange={(e) => setEditContent(e.target.value)} />
+                                                        <div className="button-group">
+                                                            <button type="submit">수정</button>
+                                                            <button type="button" onClick={() => setEditingCommentId(null)}>취소</button>
+                                                        </div>
+                                                    </form>
+                                                ) : (
+                                                    <>
+                                                        <p className="comment-content">
+                                                            {reply.is_deleted
+                                                                ? (reply.deleted_by === 'admin' ? '관리자에 의해 삭제된 댓글입니다.' : '삭제된 댓글입니다.')
+                                                                : reply.content}
+                                                        </p>
+
+                                                        {/* 추천/비추천 버튼 */}
+                                                        <div className="comment-footer">
+                                                            <div></div> {/* 좌측 여백용 (답글 버튼 없음) */}
+                                                            <div className="right-side vote-buttons">
+                                                                <button
+                                                                    className={`vote-button recommend ${votedComments.includes(reply.id) ? 'voted' : ''}`}
+                                                                    onClick={() => handleVote(reply.id, true)}
+                                                                >
+                                                                    <FaThumbsUp className="vote-icon" /><span>{voteCounts[reply.id]?.upvotes || 0}</span>
+                                                                </button>
+                                                                <button
+                                                                    className={`vote-button not-recommend ${votedComments.includes(reply.id) ? 'voted' : ''}`}
+                                                                    onClick={() => handleVote(reply.id, false)}
+                                                                >
+                                                                    <FaThumbsDown className="vote-icon" /><span>{voteCounts[reply.id]?.downvotes || 0}</span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </li>
                                     ))}
+                                    
                                 </ul>
 
                                 {/* 대댓글 입력창 */}

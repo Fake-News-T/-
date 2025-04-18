@@ -54,6 +54,14 @@
 .search-bar {
   /* 검색창 스타일 */
 }
+.article-content {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  align-items: center;
+  padding-left: 15px; /* ✅ 이미지 여백 */
+  padding-right: 0; /* ❌ 오른쪽 여백 제거 */
+}
 
 .news-grid {
   list-style: none;
@@ -61,36 +69,76 @@
 }
 
 .news-article {
-  align-items: flex;
   display: flex;
-  align-items: flex-start;
-  margin-bottom: 15px; /* 기사 간 간격 추가 */
-  padding: 15px;
-  border: 1px solid #ddd; /* 테두리 색상 변경 */
+  justify-content: space-between;
+  align-items: stretch;
+  padding: 15px 15px; /* 좌우 padding 제거 */
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
   border-radius: 10px;
+  background-color: #f6f6f6;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  min-height: 180px;
+  width: 100%;
+  height: 220px; /* ✅ 높이 고정 */
+  box-sizing: border-box; /* ✅ 여백 포함하여 동일한 너비 보장 */
+}
+
+/* 기사 콘텐츠 (이미지 + 텍스트) */
+.article-content {
+  display: flex;
   flex-direction: row;
-  background-color: #f6f6f6; /* 기사 배경색 추가 */
-  min-height: 180px; /* 카드 높이 최소값 */
-  max-height: 180px; /* 카드 높이 최댓값 */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* 그림자 추가 */
+  align-items: flex-start;
+  flex-grow: 1; /* ✅ 텍스트 영역이 가득 채우도록 */
+  margin-right: 0px; /* 북마크와의 간격 */
+  box-sizing: border-box;
+}
+
+.article-left {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  padding-left: 15px; /* ✅ 이미지와의 간격 유지 */
+  padding-right: 10px; /* ✅ 북마크와의 간격 확보 */
+  box-sizing: border-box;
+}
+
+.article-right {
+  width: 50px;
+  min-width: 50px;
+  min-height: 150px;
+  background-color: #6b8ca0; /* 예시: 파란 배경 */
+  margin-right: 15px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.image-wrapper {
+  position: relative;
+  width: 120px;
+  height: 80px;
+  margin-right: 15px;
+  margin-left: 15px;
+  flex-shrink: 0;
 }
 
 .article-image {
-  width: 120px; /* 이미지 너비 조정 */
-  height: 80px; /* 이미지 높이 조정 */
-  object-fit: cover;
+  width: 120px;
+  height: 80px;
   margin-right: 15px;
-  margin-left: 15px;
-  border-radius: 4px; /* 이미지 테두리 둥글게 */
+  margin-left: 0; /* ✅ 이쪽도 패딩에 통일 */
+  object-fit: cover;
+  border-radius: 4px;
 }
 
 .article-details {
-  flex-grow: 1;
+  flex: 1;
   display: flex;
-  margin-right: 15px; /* 이미지 왼쪽 여백 15px 와 똑같이 오른쪽 여백 추가 */
   flex-direction: column;
-  justify-content: space-between; /* 제목과 하단 정보 분리 */
-  height: 100%; /* 카드 내부 높이 최대 채우기(기자, 날짜, 링크 아래로 고정) */
+  justify-content: space-between;
 }
 
 .article-title {
@@ -111,6 +159,7 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .reporter-info {
@@ -207,4 +256,45 @@
 .page-jump-input:focus {
   border-color: #007bff; /* 포커스 시 테두리 강조 */
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25); /* 포커스 그림자 */
+}
+
+/* 북마크 전체 박스 */
+
+.bookmark-area {
+  background-color: white;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+  width: 40px;
+  height: 100%;
+  border: 1.2px solid black;
+  border-radius: 8px;
+  margin-right: 15px; /* ✅ 오른쪽 간격 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bookmark-area:hover {
+  background-color: #dbeeff; /* 원하는 hover 색상 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+}
+
+.bookmark-area.bookmarked:hover {
+  background-color: #bcd9f5;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+}
+
+/* 북마크된 경우 배경색 파란색 */
+.bookmark-area.bookmarked {
+  background-color: #5a82a7; /* 원하는 파란색 코드 */
+}
+
+/* 아이콘 스타일 */
+.bookmark-icon {
+  color: white; /* 내부 색상 */
+  stroke: black; /* 외곽선 */
+  stroke-width: 10; /* 외곽선 두께 (작으면 20~30 추천) */
+  font-size: 26px;
+  pointer-events: none;
 }

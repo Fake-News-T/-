@@ -1,32 +1,38 @@
-// import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FaUser, FaUserPlus, FaSignOutAlt } from 'react-icons/fa';
 import React from 'react';
 import './Header.css';
 
-function Header({ onMenuToggle, onOpenLogin, onOpenSignup, loggedInUsername, onLogout, onNavigate, onResetSearchAndCategory }) {
+function Header({ onMenuToggle, onOpenLogin, onOpenSignup, loggedInUsername, onLogout, onResetSearchAndCategory }) {
+    const navigate = useNavigate();
+
+    const handleLogoClick = () => {
+        onResetSearchAndCategory();   // 검색어 & 카테고리 초기화
+        navigate('/');                 // 메인 페이지로 이동 (경로 '/')
+        window.scrollTo(0, 0);       // 스크롤 맨 위로
+    };
+
     return (
         <header className="news-header">
             <div className="header-left">
                 <button className="hamburger-menu" onClick={onMenuToggle}>☰</button>
             </div>
             <div className="header-center">
-            <span className="news-logo" onClick={() => {
-                onResetSearchAndCategory();   // 검색어 & 카테고리 초기화
-                onNavigate('news');          // 메인 페이지로 이동
-                window.scrollTo(0, 0);        // 스크롤 맨 위로
-                }}
-                style={{ cursor: 'pointer' }}
+                <span
+                    className="news-logo"
+                    onClick={handleLogoClick}
+                    style={{ cursor: 'pointer' }}
                 >
                     신뢰도 판단기
-                    </span>
+                </span>
             </div>
             <div className="header-right">
                 {loggedInUsername ? (
                     <>
                         <span className="logged-in-user">{loggedInUsername}</span>
                         <button className="logout-button" onClick={onLogout}>
-                            <FaSignOutAlt />로그아웃</button> 
-                    </>     
+                            <FaSignOutAlt />로그아웃</button>
+                    </>
                 ) : (
                     <>
                         <button className="login-button" onClick={onOpenLogin}>

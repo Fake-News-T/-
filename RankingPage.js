@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // useNavigate 훅 import
 import './RankingPage.css';
 import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
 
 function RankingPage({ onArticleClick }) {
+    const navigate = useNavigate(); // useNavigate 훅 사용
     const [rankedArticles, setRankedArticles] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -46,6 +48,11 @@ function RankingPage({ onArticleClick }) {
         setCurrentPage(page);
     };
 
+    const handleArticleClickInternal = (article) => {
+        onArticleClick(article); // App.js의 selectedArticle 상태 업데이트
+        navigate('/comment');       // 댓글 페이지로 이동
+    };
+
     if (loading) return <div>랭킹 데이터를 불러오는 중...</div>;
     if (error) return <div>에러 발생: {error}</div>;
 
@@ -76,31 +83,24 @@ function RankingPage({ onArticleClick }) {
             {/* 기사 목록 */}
             <ul className="ranking-list">
                 {rankedArticles.map((article, index) => (
-                    <li
-                        key={article.article_link}
-                        className="ranking-item"
-                        onClick={() => onArticleClick(article)}
-                    >
-                        <div className={`rank-badge ${index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : 'default'}`}>
-                            {index + 1}
-                        </div>
-                        <div className="article-content">
-                            <h3>{article.title || '[제목 없음]'}</h3>
-                            <p className="article-summary">{article.article_summary || '[요약 없음]'}</p>
-                            <div className="vote-icons">
-                                <span className="vote-item up">
-                                    <FaThumbsUp className="vote-icon" /> {article.recommend_count}
-                                </span>
-                                <span className="vote-item down">
-                                    <FaThumbsDown className="vote-icon" /> {article.not_recommend_count}
-                                </span>
-                                <span className="comment-count">💬 {article.comment_count || 0}</span>
-                            </div>
-                            <p className="article-link">
-                                <a href={article.article_link} target="_blank" rel="noopener noreferrer">원본 기사 링크</a>
-                            </p>
-                        </div>
-                    </li>
+                    <li key={article.article_link} className="ranking-item" onClick={() => handleArticleClickInternal(article)}>
+                    <div className={`rank-badge ${index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : ''}`}>
+                      {index + 1}
+                    </div>
+                    <div className="article-content">
+                      <h3>{article.title || '[제목 없음]'}</h3>
+                      <p className="article-summary">{article.article_summary || '[요약 없음]'}</p>
+                      <div className="vote-icons">
+                        <span className="vote-item up"><FaThumbsUp className="vote-icon" />{article.recommend_count}</span>
+                        <span className="vote-item down"><FaThumbsDown className="vote-icon" />{article.not_recommend_count}</span>
+                        <span className="comment-count">💬 {article.comment_count || 0}</span>
+                      </div>
+                      <p className="article-link">
+                        <a href={article.article_link} target="_blank" rel="noopener noreferrer">원본 기사 링크</a>
+                      </p>
+                    </div>
+                  </li>
+                  
                 ))}
             </ul>
 

@@ -1,0 +1,155 @@
+/* 📄 마이페이지 전체 레이아웃 설정 */
+.mypage {
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+/* 🏷️ 마이페이지 제목 스타일 */
+.mypage h1 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* 📘 부제목 영역 (파란색 레이아웃 포함한 wrapper) */
+.mypage-wrapper {
+  position: relative;
+}
+
+/* 📝 제목 텍스트 스타일 (좌측 정렬) */
+.mypage-title {
+  text-align: left;
+  margin-left: 260px;
+  margin-top: 17.5px;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 17.5px;
+}
+
+/* 📘 부제목(파란색 레이아웃바) 스타일 */
+.mypage-subheader {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  background-color: #a1bfd8;
+  text-align: left;
+  padding: 1.5px 280px;
+  font-size: 30px;
+  font-weight: bold;
+  color: #333333;
+  border-radius: 0;
+}
+
+/* 📰 사용자 맞춤형 기사 추천 영역 */
+section.personalized-recommendations {
+  margin-bottom: 2rem;
+  margin-top: 45px;
+}
+
+/* 🗂️ 추천 기사 리스트 그리드 */
+.recommendation-list {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* 📌 추천 기사 카드 스타일 */
+.recommendation-item {
+  flex: 1;
+  min-width: 300px;
+  background: #f9fcff;
+  padding: 1rem;
+  border-radius: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  transition: 0.3s;
+}
+
+/* 🔍 추천 기사 hover 효과 */
+.recommendation-item:hover {
+  background-color: #eef6ff;
+}
+
+/* 🔗 추천 기사 링크 스타일 */
+.recommendation-item a {
+  font-weight: bold;
+  color: #1a4fa3;
+  text-decoration: none;
+}
+
+/* 📋 테이블 전체 스타일 (최근 분석 기록 / 북마크 공통) */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 🧾 테이블 헤더 스타일 */
+table thead {
+  background-color: #f0f4f8;
+}
+
+/* 📄 셀 스타일 */
+table th,
+table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eaeaea;
+  font-size: 0.95rem;
+}
+
+/* 최근 분석 기록 테이블 내 기자 셀 너비 조정 */
+table th:nth-child(3),
+table td:nth-child(3) {
+  min-width: 70px; /* 적절히 너비 확보 */
+  white-space: nowrap; /* 줄바꿈 방지 */
+}
+
+/* 🔗 테이블 링크 스타일 */
+table a {
+  color: #1d5dc2;
+  text-decoration: none;
+}
+
+/* 📌 북마크 아이콘 색상 지정 */
+.bookmarked-table .mypage-bookmark-icon {
+  color: #ffcc00;
+  font-size: 1.4rem;
+  margin-left: 15px;
+  background: none !important; /* 배경 제거 */
+  box-shadow: none !important; /* 그림자 제거 */
+  border: none !important; /* 테두리 제거 */
+  border-radius: 0 !important;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.mypage-bookmark-icon:hover {
+  color: #f1b400; /* 호버 시 색상 살짝 어둡게 */
+  transform: scale(1.2); /* 크기 1.2배 확대 */
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.2)); /* 그림자 효과 */
+}
+
+/* ❌ 계정 삭제 버튼 스타일 */
+.delete-account-button {
+  display: block;
+  margin: 3rem auto 1rem auto;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* 🔥 계정 삭제 버튼 hover 시 색상 변화 */
+.delete-account-button:hover {
+  background-color: #c0392b;
+}

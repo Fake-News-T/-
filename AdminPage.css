@@ -1,0 +1,191 @@
+/* ✅ 기본 관리자 페이지 구조 */
+.admin-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+/* ✅ 헤더 영역 */
+.admin-header-wrapper {
+  position: relative;
+}
+
+.admin-title {
+  text-align: left;
+  font-size: 32px;
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  padding-left: 0px;
+}
+
+.admin-subheader {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  background-color: #a1bfd8;
+  color: #333;
+  text-align: left;
+  padding: 16px 280px;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+
+/* ✅ 탭 스타일 */
+.admin-tabs {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.admin-tabs button {
+  background-color: #e6f4ff;
+  color: #1677ff;
+  border: 1px solid #91caff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.admin-tabs button:hover {
+  background-color: #bae0ff;
+  color: #0958d9;
+}
+
+.admin-tabs button.active {
+  background-color: #1677ff;
+  color: white;
+  border: 1px solid #1677ff;
+}
+
+.article-search-input {
+  display: block;
+  margin: 10px 0 20px;
+  padding: 8px 12px;
+  width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.article-search-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+}
+
+/* ✅ 섹션 스타일 */
+.admin-section {
+  margin-bottom: 40px;
+  padding: 0 260px;
+}
+
+.admin-section h2 {
+  color: #2c3e50;
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+/* ✅ 테이블 스타일 */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  font-size: 14px;
+  text-align: left;
+}
+
+.admin-table th {
+  background-color: #f8f9fb;
+  font-weight: bold;
+}
+
+/* ✅ 리스트 및 버튼 */
+.admin-page ul {
+  padding: 0;
+  list-style: none;
+}
+
+.admin-page li {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eaeaea;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.adminpage-delete-button {
+  background-color: #ff4d4f; /* 강렬한 빨간색 */
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  margin-left: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.adminpage-delete-button:hover {
+  background-color: #d9363e;
+}
+
+/*페이지 네이션*/
+.pagination {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 8px 14px;
+  border: none;
+  background-color: #f2f2f2;
+  color: #222;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #d0d0d0;
+}
+
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pagination button.active {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+.page-input {
+  width: 50px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  text-align: center;
+  outline: none;
+  font-size: 14px;
+}

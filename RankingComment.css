@@ -22,6 +22,7 @@
 .comment-section {
   width: 100%;
   max-width: 1200px;
+  max-height: 220px;
   background-color: #ffffff;
   border: 1px solid #eee;
   border-radius: 10px;
@@ -155,6 +156,8 @@
   resize: vertical;
   min-height: 80px;
   padding: 10px;
+  width: 1180px;
+  max-height: 100px;
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -187,6 +190,8 @@
   min-height: 80px;
   padding: 10px;
   font-size: 14px;
+  max-height: 100px;
+  width: 100px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
@@ -236,6 +241,7 @@
   width: 100%;
   min-height: 80px;
   padding: 10px;
+  max-height: 100px;
   border-radius: 6px;
   border: 1px solid #ccc;
   resize: vertical;
@@ -326,6 +332,7 @@
   width: 100%;
   min-height: 60px;
   padding: 8px;
+  max-height: 100px;
   font-size: 13px;
   border: 1px solid #ccc;
   border-radius: 4px;

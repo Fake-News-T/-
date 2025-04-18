@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import Navigation from './components/Navigation';
 import MainContent from './components/MainContent';
@@ -9,6 +10,8 @@ import Signup from './components/Signup';
 import AnalyzePage from './components/AnalyzePage';
 import RankingPage from './components/RankingPage';
 import RankingComment from './components/RankingComment'; // 🔹 댓글 페이지 추가
+import MyPage from './components/mypage';
+import AdminPage from './components/AdminPage';
 import './App.css';
 
 function App() {
@@ -18,7 +21,6 @@ function App() {
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
     const [loggedInUsername, setLoggedInUsername] = useState(null);
-    const [currentPage, setCurrentPage] = useState('news');
     const [selectedArticle, setSelectedArticle] = useState(null); // 🔹 선택된 뉴스 저장
 
     const handleSearch = (term) => {
@@ -64,70 +66,45 @@ function App() {
         console.log('User logged out.');
     };
 
-    const navigatePage = (page) => {
-        setCurrentPage(page);
-        setIsMenuOpen(false);
-    };
-
-    const resetSearchAndCategory = () => {
-        setSearchTerm('');
-        setSelectedCategory('');
-    };
-
-    const handleOpenCommentPage = (article) => {
-        setSelectedArticle(article);
-        setCurrentPage('comment');
-    };
-
-    const handleBackToRanking = () => {
-        setCurrentPage('ranking');
-        setSelectedArticle(null);
-    };
-
     return (
-        <div className="app">
-            <div className="sticky-wrapper">
-                <Header
-                    onMenuToggle={toggleMenu}
-                    onOpenLogin={openLoginModal}
-                    onOpenSignup={openSignupModal}
-                    loggedInUsername={loggedInUsername}
-                    onLogout={handleLogout}
-                    onNavigate={navigatePage}
-                    onResetSearchAndCategory={resetSearchAndCategory}
-                />
-                <SideMenu isOpen={isMenuOpen} onClose={closeMenu} onNavigate={navigatePage} />
-                {/* 구분선 추가*/}
-                <div className="header-divider" />
-                <Navigation onCategorySelect={handleCategorySelect} selectedCategory={selectedCategory} />
+        <Router>
+            <div className="app">
+                <div className="sticky-wrapper">
+                    <Header
+                        onMenuToggle={toggleMenu}
+                        onOpenLogin={openLoginModal}
+                        onOpenSignup={openSignupModal}
+                        loggedInUsername={loggedInUsername}
+                        onLogout={handleLogout}
+                        onResetSearchAndCategory={() => {
+                            setSearchTerm('');
+                            setSelectedCategory('');
+                        }}
+                    />
+                    <SideMenu isOpen={isMenuOpen} onClose={closeMenu} isLoggedIn={!!loggedInUsername} loggedInUsername={loggedInUsername} />
+                    {/* 구분선 추가*/}
+                    <div className="header-divider" />
+                    <Navigation onCategorySelect={handleCategorySelect} selectedCategory={selectedCategory} />
+                </div>
+
+                <Routes>
+                    <Route path="/" element={
+                        <>
+                            <SearchBar onSearch={handleSearch}isLoggedIn={!!loggedInUsername} loggedInUsername={loggedInUsername}/>
+                            <MainContent searchTerm={searchTerm} selectedCategory={selectedCategory} isLoggedIn={!!loggedInUsername} loggedInUsername={loggedInUsername} />
+                        </>
+                    } />
+                    <Route path="/analyze" element={<AnalyzePage isLoggedIn={!!loggedInUsername} loggedInUsername={loggedInUsername} />} />
+                    <Route path="/ranking" element={<RankingPage onArticleClick={(article) => setSelectedArticle(article)} />} />
+                    <Route path="/comment" element={<RankingComment selectedArticle={selectedArticle} isLoggedIn={!!loggedInUsername} loggedInUsername={loggedInUsername} onBack={() => setSelectedArticle(null)} />} />
+                    <Route path="/mypage" element={<MyPage isLoggedIn={!!loggedInUsername} loggedInUsername={loggedInUsername} onLogout={handleLogout} />} /> {/* onLogout prop 전달 */}
+                    <Route path="/admin" element={<AdminPage loggedInUsername={loggedInUsername} />} />
+                </Routes>
+
+                {isLoginModalOpen && <Login onClose={closeLoginModal} onLoginSuccess={handleLoginSuccess} />}
+                {isSignupModalOpen && <Signup onClose={closeSignupModal} />}
             </div>
-
-            {currentPage === 'news' && <SearchBar onSearch={handleSearch} />}
-
-            {(() => {
-                if (currentPage === 'news') {
-                    return <MainContent searchTerm={searchTerm} selectedCategory={selectedCategory} />;
-                } else if (currentPage === 'analyze') {
-                    return <AnalyzePage isLoggedIn={!!loggedInUsername} loggedInUsername={loggedInUsername} />;
-                } else if (currentPage === 'ranking') {
-                    return <RankingPage onArticleClick={handleOpenCommentPage} />;
-                } else if (currentPage === 'comment') {
-                    return (
-                        <RankingComment
-                            selectedArticle={selectedArticle}
-                            isLoggedIn={!!loggedInUsername}
-                            loggedInUsername={loggedInUsername}
-                            onBack={handleBackToRanking}
-                        />
-                    );
-                } else {
-                    return null;
-                }
-            })()}
-
-            {isLoginModalOpen && <Login onClose={closeLoginModal} onLoginSuccess={handleLoginSuccess} />}
-            {isSignupModalOpen && <Signup onClose={closeSignupModal} />}
-        </div>
+        </Router>
     );
 }
 
