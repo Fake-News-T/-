@@ -18,7 +18,7 @@ function MainContent({ searchTerm, selectedCategory, isLoggedIn, loggedInUsernam
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchTerm, selectedCategory]);
+    }, [searchTerm, selectedCategory]);   // 이런식으로 코드를 수정하여 커밋할 수 있다.
 
     useEffect(() => {
         const fetchNews = async () => {
